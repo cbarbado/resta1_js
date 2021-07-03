@@ -1,7 +1,7 @@
+const CANVAS_WIDTH  = 530;
+const CANVAS_HEIGHT = 530;
 var canvas;
 var context;
-var canvasWidth  = 530;
-var canvasHeight = 530;
 var gameBoard;
 
 /*----------------------------------------------------------------------------*/
@@ -10,36 +10,36 @@ var gameBoard;
 class ImageLoader {
 
 	constructor () {
-		this.iAssetsCounter = 0;
-		this.iAssetsLoaded  = 0;
-		this.idInterval     = 0;
+		this.assetsCounter = 0;
+		this.assetsLoaded  = 0;
+		this.idInterval    = 0;
 	}
 
-	loadImage(strImageFile) {
+	loadImage(imageFileName) {
 		var img    = new Image();
-		var tmp    = this; // sério???
-		img.onload = function () {tmp.iAssetsLoaded++;};
+		var tmp    = this; // really???
+		img.onload = function () {tmp.assetsLoaded++;};
 
-		img.src = strImageFile;
-		this.iAssetsCounter++;
+		img.src = imageFileName;
+		this.assetsCounter++;
 		return img;
 	}
 
-	loadImages(strImageFiles) {
-		var Images = new Map();
+	loadImages(imageFileNames) {
+		var images = new Map();
 		
-		for (var i in strImageFiles) {
-			Images.set(strImageFiles[i], this.loadImage(strImageFiles[i]));
+		for (var i in imageFileNames) {
+			images.set(imageFileNames[i], this.loadImage(imageFileNames[i]));
 		}
-		return Images;
+		return images;
 	}
 
 	assetLoaded(){
-		this.iAssetsLoaded++;
+		this.assetsLoaded++;
 	}
 
 	isReady () {
-		if (this.iAssetsLoaded == this.iAssetsCounter) {
+		if (this.assetsLoaded == this.assetsCounter) {
 			return true;
 		}
 		return false;   
@@ -137,7 +137,7 @@ class GameBoard {
 		var tileY = Math.floor(mouseY / this.tileSize);
 
 		switch (this.boardMap[tileY][tileX]) {
-			case 2: // clicou em uma peça
+			case 2: // clicked a tile piece
 				this.saveBoard();
 				this.boardMap[tileY][tileX] = 1;
 				this.pickX = tileX;
@@ -145,11 +145,11 @@ class GameBoard {
 				this.flagDrag = true;
 				this.redraw();
 				break;
-			case 4: // botão reset
+			case 4: // reset button
 				this.resetBoardMap();			
 				this.redraw();
 				break;
-			case 3: // botão undo
+			case 3: // undo button
 				this.restoreBoard();
 				break;
 		}
@@ -181,20 +181,20 @@ class GameBoard {
 
 		if(this.flagDrag == true) {
 			var flagValidMove = false;
-			if(this.boardMap[tileY][tileX] == 1) { // casa de destino está livre
+			if(this.boardMap[tileY][tileX] == 1) { // target tile is free
 				// HORIZONTAL
-				if(tileY == this.pickY) { // mantendo a posição vertical (a matriz é [Y][X] o.O)
-					if((tileX - this.pickX) == 2) { // pulando duas casas para direita
-						if(this.boardMap[tileY][this.pickX + 1] == 2) { // casa do meio preenchida
-							this.boardMap[tileY][this.pickX + 1] = 1; // remove peça do meio
-							this.boardMap[tileY][tileX] = 2; // preenche casa de destino
+				if(tileY == this.pickY) { // same vertical position (the matrix is [Y][X] o.O)
+					if((tileX - this.pickX) == 2) { // jumping 2 tiles to the right
+						if(this.boardMap[tileY][this.pickX + 1] == 2) { // the mid tile is ocupied
+							this.boardMap[tileY][this.pickX + 1] = 1; // remove the middle piece
+							this.boardMap[tileY][tileX] = 2; // fill the target tile
 							flagValidMove = true;
 						}
 					}
-					if((tileX - this.pickX) == -2) { // pulando duas casas para esquerda
-						if(this.boardMap[tileY][this.pickX - 1] == 2) { // casa do meio preenchida
-							this.boardMap[tileY][this.pickX - 1] = 1; // remove peça do meio
-							this.boardMap[tileY][tileX] = 2; // preenche casa de destino
+					if((tileX - this.pickX) == -2) { // jumping 2 tiles to the left
+						if(this.boardMap[tileY][this.pickX - 1] == 2) { // the mid tile is ocupied
+							this.boardMap[tileY][this.pickX - 1] = 1; // remove the middle piece
+							this.boardMap[tileY][tileX] = 2; // fill the target tile
 							flagValidMove = true;
 						}
 					}
@@ -202,16 +202,16 @@ class GameBoard {
 				// VERTICAL
 				if(tileX == this.pickX) { // mantendo a posição horizontal
 					if((tileY - this.pickY) == 2) { // pulando duas casas para baixo
-						if(this.boardMap[this.pickY + 1][tileX] == 2) { // casa do meio preenchida
-							this.boardMap[this.pickY + 1][tileX] = 1; // remove peça do meio
-							this.boardMap[tileY][tileX] = 2; // preenche casa de destino
+						if(this.boardMap[this.pickY + 1][tileX] == 2) { // the mid tile is ocupied
+							this.boardMap[this.pickY + 1][tileX] = 1; // remove the middle piece
+							this.boardMap[tileY][tileX] = 2; // fill the target tile
 							flagValidMove = true;
 						}
 					}
 					if((tileY - this.pickY) == -2) { // pulando duas casas para cima
-						if(this.boardMap[this.pickY - 1][tileX] == 2) { // casa do meio preenchida
-							this.boardMap[this.pickY - 1][tileX] = 1; // remove peça do meio
-							this.boardMap[tileY][tileX] = 2; // preenche casa de destino
+						if(this.boardMap[this.pickY - 1][tileX] == 2) { // the mid tile is ocupied
+							this.boardMap[this.pickY - 1][tileX] = 1; // remove the middle piece
+							this.boardMap[tileY][tileX] = 2; // fill the target tile
 							flagValidMove = true;
 						}
 					}
@@ -253,8 +253,8 @@ function prepareCanvas()
 	// Create the canvas (Neccessary for IE because it doesn't know what a canvas element is)
 	var canvasDiv = document.getElementById('canvasDiv');
 	canvas = document.createElement('canvas');
-	canvas.setAttribute('width', canvasWidth);
-	canvas.setAttribute('height', canvasHeight);
+	canvas.setAttribute('width', CANVAS_WIDTH);
+	canvas.setAttribute('height', CANVAS_HEIGHT);
 	canvas.setAttribute('id', 'canvas');
 	canvasDiv.appendChild(canvas);
 	if(typeof G_vmlCanvasManager != 'undefined') {
@@ -264,7 +264,7 @@ function prepareCanvas()
 	// Note: The above code is a workaround for IE 8 and lower. Otherwise we could have used:
 	//     context = document.getElementById('canvas').getContext("2d");
 	
-	gameBoard = new GameBoard(context, canvasWidth, canvasHeight);
+	gameBoard = new GameBoard(context, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 	// Add mouse events
 	// ----------------
